@@ -1,0 +1,164 @@
+language: shell
+dist: xenial
+services:
+  - docker
+env:
+  global:
+    - REPO=nugu-linux
+    - REPOSLUG=nugu-developers/nugu-linux
+addons:
+  apt:
+    packages:
+      - jq
+branches:
+  only:
+    - master
+
+jobs:
+  include:
+    - stage: setup
+      script: |
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        ID=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${TRAVIS_REPO_SLUG}/releases/tags/${SHORTSHA} | jq '.id' -r)
+        echo "ID = ${ID}"
+        if [[ ${ID} != "null" ]]; then
+          echo "Remove exist release ${ID}"
+          curl -D - -H "Authorization: token ${GITHUB_TOKEN}" -X DELETE https://api.github.com/repos/${TRAVIS_REPO_SLUG}/releases/${ID}
+        fi
+    - stage: build
+      env:
+        - TARGET=xenial_x64
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    -
+      env:
+        - TARGET=xenial_arm64
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    -
+      env:
+        - TARGET=xenial_armhf
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    -
+      env:
+        - TARGET=bionic_x64
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    -
+      env:
+        - TARGET=bionic_arm64
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    -
+      env:
+        - TARGET=bionic_armhf
+      script: |
+        echo "Build ${TARGET}"
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        export TRAVIS_TAG=${SHORTSHA}
+        echo "TRAVIS_TAG = ${TRAVIS_TAG}"
+        ./prepare.sh
+        ./extract.sh files_${TARGET}_${SHORTSHA}
+      deploy:
+        provider: releases
+        api_key:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        file_glob: true
+        file: /tmp/result/*
+        on:
+          repo: nugulinux/test
+        overwrite: true
+    - stage: generate
+      name: Generate deb package repository using GitHub Pages
+      script: |
+        echo "Generate meta info"
+        curl -D - -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master
+        export SHA=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+        export SHORTSHA=$(echo ${SHA} | cut -c -7)
+        ./generate.sh
+      deploy:
+        provider: pages
+        github_token:
+          secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+        local_dir: /tmp/www
+        keep_history: false
+        on:
+          repo: nugulinux/test
