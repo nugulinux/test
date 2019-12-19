@@ -1,10 +1,19 @@
-name: checkpatch review
-on: [pull_request]
+on: [push]
+
 jobs:
-  my_review:
-    name: checkpatch review
+  hello_world_job:
     runs-on: ubuntu-latest
+    name: A job to say hello
     steps:
-    - uses: actions/checkout@v1
-    - name: Run checkpatch review
-      uses: webispy/checkpatch-action@master
+    # To use this repository's private action, you must check out the repository
+    - name: Checkout
+      uses: actions/checkout@v1
+    #- uses: ./ # Uses an action in the root directory
+    - name: Hello world action step
+      id: hello
+      uses: JeanTracker/test-github-action@master
+      with:
+        who-to-greet: 'Mona the Octocat'
+    # Use the output from the `hello` step
+    - name: Get the output time
+      run: echo "The time was ${{ steps.hello.outputs.time }}"
