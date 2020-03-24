@@ -1,0 +1,40 @@
+language: shell
+dist: xenial
+services:
+- docker
+env:
+  global:
+    - UPLOAD=0
+    - REPO=nugu-linux
+    - REPOSLUG=nugu-developers/nugu-linux
+  matrix:
+    - TARGET=emulator
+    - TARGET=device
+addons:
+  apt:
+    packages:
+      - jq
+
+script: |
+  export CURL_AUTH="Authorization: token ${GITHUB_TOKEN}"
+  export SHA=$(curl -s -H "$CURL_AUTH" -X GET https://api.github.com/repos/${REPOSLUG}/commits/master | jq '.sha' -r)
+  export SHORTSHA=$(echo ${SHA} | cut -c -7)
+  export TRAVIS_TAG=${SHORTSHA}
+  ./check.sh /tmp/check
+  echo "Script result = $?"
+  if [ -f /tmp/check ]; then
+    UPLOAD=1
+    ./tizen.sh
+  fi
+  echo "Upload flag = $UPLOAD"
+deploy:
+  provider: releases
+  api_key:
+    secure: BJsLaAxbgNRpwiO1bL3DqUnTRbGofzGHFXdJWB79udiHFPg1/RlxS07/N0L8Ysi5k6uTawGRS7m8P/BbILiMVo5cVeTwUwGNdPozMo34+eq28UswypFg1JWHJ8HciFNlsyQd8vbaYd9JUSWHnpwbqeff54jcxxF+dL2dOo/QVDZjGK3g5V8lsey2cxEXMjlbF+WNMhQQlXjv21t8Hpxqn4CN86bGrPQFJD1N3HEeneuGZn0HjhjpM6kuVugPLBvHUeClTl/77n3Q9lUWC8ryEGOYs6Q2IMA3F+QVRNJeJKsuxSWdbkz6WpNOmQGIXm+sFiI9O1Uv9g7fAgqsgVbtf0gBbtcgxRf1Ihh/cGIhgoHSaAcYT38BwXhV7Xh3VnlaezVZClSwyJWomqmWJnEYsw1j+FwYQvGPI9BhfrqMaEw+DT+kdBkiCznJDUdjjmfi2eIeEQWaJFvp92BnSrA8GuTSx64nLSQvRhiKvkfb85QcvIVXrLo8l+a959x7dkYHHzKHF3XdUtCiNcsIiwV2ck/FJO4bXR9FKg3Jc0/Y6rXsM4Lffimh7rn6ELmP7IM9JCka55X1ZbOxWs+LwSJroTxmjKMgzY2ifXBesXbNq3Q6vrJBSwA9cU7lKt7J/KGsS3gOoZTV0C87IXYJWS1GJkT7169wiV8vWOD6R5AvUjY=
+  file_glob: true
+  file: /tmp/result/*
+  on:
+    repo: nugulinux/test
+    condition: $UPLOAD = 1
+    all_branches: true
+  overwrite: true
