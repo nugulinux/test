@@ -1,0 +1,10 @@
+<map id="NuguCapability" name="NuguCapability">
+<area shape="rect" id="node1" href="$group__AudioPlayerInterface.html" title="AudioPlayer capability interface. " alt="" coords="172,5,325,32"/>
+<area shape="rect" id="node2" href="$group__SystemInterface.html" title="System capability interface. " alt="" coords="185,56,312,83"/>
+<area shape="rect" id="node3" href="$group__SpeakerInterface.html" title="Speaker capability interface. " alt="" coords="183,107,314,133"/>
+<area shape="rect" id="node4" href="$group__CapabilityFactory.html" title="CapabilityFactory. " alt="" coords="183,157,314,184"/>
+<area shape="rect" id="node6" href="$group__MicInterface.html" title="MIC capability interface. " alt="" coords="199,208,298,235"/>
+<area shape="rect" id="node7" href="$group__TTSInterface.html" title="TTS capability interface. " alt="" coords="198,259,299,285"/>
+<area shape="rect" id="node8" href="$group__ASRInterface.html" title="ASR capability interface. " alt="" coords="197,309,301,336"/>
+<area shape="rect" id="node9" href="$group__TextInterface.html" title="Text capability interface. " alt="" coords="197,360,300,387"/>
+</map>

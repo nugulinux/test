@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classNuguClientKit_1_1ICapabilityInterface.html" title="capability interface " alt="" coords="5,203,187,245"/>
+<area shape="rect" id="node2" href="$classNuguCapability_1_1IASRHandler.html" title="ASR handler interface. " alt="" coords="246,5,450,32"/>
+<area shape="rect" id="node3" href="$classNuguCapability_1_1IAudioPlayerHandler.html" title="audioplayer handler interface " alt="" coords="247,57,449,98"/>
+<area shape="rect" id="node4" href="$classNuguCapability_1_1IMicHandler.html" title="mic handler interface " alt="" coords="249,123,447,149"/>
+<area shape="rect" id="node5" href="$classNuguCapability_1_1ISpeakerHandler.html" title="speaker handler interface " alt="" coords="257,174,439,215"/>
+<area shape="rect" id="node6" href="$classNuguCapability_1_1ISystemHandler.html" title="system handler interface " alt="" coords="235,240,461,267"/>
+<area shape="rect" id="node7" href="$classNuguCapability_1_1ITextHandler.html" title="text handler interface " alt="" coords="247,291,449,317"/>
+<area shape="rect" id="node8" href="$classNuguCapability_1_1ITTSHandler.html" title="tts handler interface " alt="" coords="247,341,449,368"/>
+<area shape="rect" id="node9" href="$classNuguClientKit_1_1Capability.html" title="Capability. " alt="" coords="259,392,437,419"/>
+</map>

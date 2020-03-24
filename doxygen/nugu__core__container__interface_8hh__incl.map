@@ -1,0 +1,11 @@
+<map id="nugu_core_container_interface.hh" name="nugu_core_container_interface.hh">
+<area shape="rect" id="node2" href="$capability__helper__interface_8hh.html" title="clientkit/capability\l_helper_interface.hh" alt="" coords="200,95,352,136"/>
+<area shape="rect" id="node10" href="$media__player__interface_8hh.html" title="clientkit/media_player\l_interface.hh" alt="" coords="415,95,577,136"/>
+<area shape="rect" id="node11" href="$network__manager__interface_8hh.html" title="clientkit/network_manager\l_interface.hh" alt="" coords="601,95,791,136"/>
+<area shape="rect" id="node12" href="$nugu__timer__interface_8hh.html" title="clientkit/nugu_timer\l_interface.hh" alt="" coords="815,95,963,136"/>
+<area shape="rect" id="node14" href="$speech__recognizer__interface_8hh.html" title="clientkit/speech_recognizer\l_interface.hh" alt="" coords="988,95,1183,136"/>
+<area shape="rect" id="node15" href="$wakeup__interface_8hh.html" title="clientkit/wakeup_interface.hh" alt="" coords="1207,102,1414,129"/>
+<area shape="rect" id="node5" href="$nugu__event_8h.html" title="base/nugu_event.h" alt="" coords="184,191,328,218"/>
+<area shape="rect" id="node6" href="$nugu__focus_8h.html" title="base/nugu_focus.h" alt="" coords="353,191,495,218"/>
+<area shape="rect" id="node7" href="$playsync__manager__interface_8hh.html" title="clientkit/playsync\l_manager_interface.hh" alt="" coords="520,184,691,225"/>
+</map>
